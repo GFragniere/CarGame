@@ -41,10 +41,6 @@ class Player:
     -------
     move()
         Used to make the player go to his next tile, based on his current speed and position.
-    set_state(new_state)
-        used to set the state of the player to a new one, when he wins or is out of the game.
-    get_state()
-        used by the game to know if the player should move or not, or if he won.
     path_checking()
         used to know if the player can go from his current position to his new one, without colliding with a player or
         going on/over a tile that can't be run on.
