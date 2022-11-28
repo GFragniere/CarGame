@@ -20,22 +20,6 @@ class Game:
     new_player(player_number: int, player_position: np.array([0, 0]), player_speed: np.array = np.array([0, 0]),
         player_state: PlayerState = 1)
         Used to create new players.
-
-    start()
-        Launches the game, and creates a number of players depending on the number wished by the user.
-
-    players_input_set()
-        Used to define each player's input list (max 3).
-
-    player_action(player, action)
-        Defines what the input will have as an effect on the player, depending on his number and if the wanted action
-        is in the dictionary of said player.
-
-    players_state_check()
-        Checks all the players' state to know if the game should stop or not.
-
-    player_out(player)
-        Used to make a player out of the game.
     """
 
     def __init__(self):
