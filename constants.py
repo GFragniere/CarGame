@@ -6,3 +6,4 @@ default_inputs = {
     "s": np.array([0, 1]),
     "d": np.array([1, 0]),
 }
+"""The base inputs for the player stored in a dictionary."""

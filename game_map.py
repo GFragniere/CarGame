@@ -1,22 +1,20 @@
-import enum
-
 import numpy as np
 
 # from CarGame.player import Player
-from enum import Flag
+from enum import Flag, auto
 
 
 class TileState(Flag):
-    PLAYER_1 = enum.auto()
-    PLAYER_2 = enum.auto()
-    PLAYER_3 = enum.auto()
-    PLAYER_4 = enum.auto()
-    PLAYER_5 = enum.auto()
-    PLAYER_6 = enum.auto()
-    PLAYER_7 = enum.auto()
-    PLAYER_8 = enum.auto()
-    WALL = enum.auto()
-    WIN = enum.auto()
+    PLAYER_1 = auto()  # 1
+    PLAYER_2 = auto()  # 2
+    PLAYER_3 = auto()  # 4
+    PLAYER_4 = auto()  # 8
+    PLAYER_5 = auto()  # 16
+    PLAYER_6 = auto()  # 32
+    PLAYER_7 = auto()  # 64
+    PLAYER_8 = auto()  # 128
+    WALL = auto()  # 256
+    WIN = auto()  # 512
 
 
 class GameMap:
@@ -45,11 +43,15 @@ class GameMap:
         Allows to create a pre-made map, with the kill zones and finish zone already established
         (must be a 40 x by 25 y map).
 
-    get_tile_type(x, y)
-        Used to return the type of tile at a specific location.
+    get_tile_list_type(index, value)
+        Used to return the map of the game without a set value.
 
-    modify_tile_state(x, y, state)
-        used to modify a specific tile's state in the desired state.
+    modify_tile_list_state(index, tile_value)
+        Used to modify a tile list with a tuple-tuple of indexes to a set value.
+
+    remove_previous_move(value
+        Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn,
+        this method is used to erase this trace.
     """
 
     def __init__(self, width: int, height: int):
@@ -129,43 +131,41 @@ class GameMap:
             self.create_kill_zone(5, 4, 3, 21)
             self.create_finish_line(3, 4, 0, 21)
 
-    def get_tile_type(self, x: int, y: int):
-        """
-        Used to return the type of tile at a specific location.
+    def get_tile_list_type(self, index: tuple, tile_value: int):
+        """Used to return a set of tiles stored in a tuple of tuples of indexes for a specific player with his
+        number associated value (refer to the TileState Flag class for values).
 
         Parameters
         ----------
-        x: int
-            the x coordinate of the tile we want to know the type
-        y:
-            the y coordinate of the tile we want to know the type
+        index: tuple
+            a tuple of tuples of indexes that we want to analise and get the value of.
 
-        Returns
-        -------
-        The type of the tile (1 is empty, 2 has a player, 3 will "kill" the player, 4 makes the player win) for
-        a set pair of coordinates.
+        tile_value: int
+            the value of the player which has to make a move.
         """
-        return int(self.map[x, y])
-
-    def get_tile_list_type(self, index: tuple, tile_value: int):
         return list(self.map[index] & ~tile_value)
 
-    def modify_tile_state(self, x: int, y: int, state: int):
-        """Used to modify a tile's state.
+    def modify_tile_list_state(self, index: tuple, tile_value: int):
+        """Used to modify a tile list with a tuple-tuple of indexes to a set value.
 
         Parameters
         ----------
-        x: int
-            the x coordinate of the tile that has to be modified.
-        y: int
-            the y coordinate of the tile that has to be modified.
-        state: int
-            the state that the tile has to be changed to.
-        """
-        self.map[x, y] = state
+        index: tuple
+            a tuple of tuples of coordinates we want the tiles' value to be changed to.
 
-    def modify_tile_list_state(self, index: tuple, tile_value: int):
+        tile_value: int
+            the value we want to modify the tiles values to.
+        """
         self.map[index] |= tile_value
 
     def remove_previous_move(self, value: int):
+        """Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn,
+        this method is used to erase this trace.
+
+        Parameters
+        ----------
+
+        value: int
+            the value from which the map has to be removed of.
+        """
         self.map &= ~value

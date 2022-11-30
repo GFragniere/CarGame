@@ -37,13 +37,29 @@ class Player:
     speed: np.array([,])
         used by the game to make the player move.
 
+
     Methods
     -------
     move()
         Used to make the player go to his next tile, based on his current speed and position.
-    path_checking()
+    path_checking(game_map)
         used to know if the player can go from his current position to his new one, without colliding with a player or
         going on/over a tile that can't be run on.
+    is_out()
+        used to put the player in the "IS_OUT" state to return the type more easily.
+    state_check()
+        used to know if the player can play, is out or has won.
+    get_walk_coordinates()
+        used to determine which tiles the player is going to go over on his next move.
+    transform_to_tuples_positions(array)
+        used to transform an array containing arrays of coordinates to a tuple of tuples of indexes.
+    collision_speed_check(game_map, speed = None)
+        used to know if the player can make a specific move or not (the speed being the desired change in the player's
+        speed) without being automatically being out of the game.
+    movement_validity()
+        used to know if the player has made a valid move in his turn, in order not to skip his turn completely.
+
+
     """
 
     def __init__(
@@ -59,39 +75,49 @@ class Player:
         ----------
         number:  int
             used to differentiate players numerically.
-        name: str
-            chosen by each player at the beginning of the game to recognize themselves.
         position: np.array([,])
             used to determine the player's position at any given time.
         speed: np.array([,])
             used to determine the player's speed at any given time.
+        name: str
+            chosen by each player at the beginning of the game to recognize themselves.
+        inputs: dict (optional)
+            the dictionary of the player's movement possibilities, has a default value of constants.default_inputs.
         """
         self.number = number
         self.position = position
         self.speed = speed
         self.name = name
         self.inputs = inputs
+        self.last_position = np.array(
+            [0, 0]
+        )  # The last position of a player, used to verify he made an action in his
+        # turn, and not skip his turn.
 
     def move(self):
         """Uses the player speed and current location to make him go to a new tile."""
         self.position += self.speed
 
-    def path_checking(self, game_map: GameMap, player_value: int):
+    def path_checking(self, game_map: GameMap):
         """Used to check if the player can go from his current position to the next one when moving.
 
-        Depending on the values of the player's speed vector, we must adapt for which slope will be taken into account,
-        either being a y/x slope or x/y slope.
-        We also use the method from CarGame.operation: pathing to figure out which tiles are in the trajectory of the
-        player.
+        We are calling on the method get_walk_coordinates to return the values of each tile the player will go through,
+        to allow us to know how the path is, and if the player can make a move or not, as well as the method state_check
+        to know if the player could even make a move in the first place.
 
         Parameters
         ----------
         game_map: GameMap
             the map on which the player is and is trying to move on.
 
-        :returns: True if the path is clear,
-        False if the player cannot go on the desired tile
+        :returns: A number, based on the state of the path:
+         1 if the path is clear;
+          2 if the path will lead to a crash;
+         3 if the path will lead to a win.
         """
+        if self.state_check() == PlayerState.IS_OUT:
+            path = 2
+            return path
         path = 1
         if np.any(
             np.greater(
@@ -101,7 +127,9 @@ class Player:
         ):
             path = 2
             return path
-        path_tile = game_map.get_tile_list_type(self.get_walk_coordinates(), player_value)
+        path_tile = game_map.get_tile_list_type(
+            self.get_walk_coordinates(), 2**self.number
+        )
         if sum(path_tile) > 0:
             for elem in path_tile:
                 if elem == TileState.WIN.value:
@@ -112,41 +140,20 @@ class Player:
                     break
         return path
 
-    def get_position(self):
-        """Used to return the player's position."""
-        return self.position[0], self.position[1]
-
-    def player_action(self, action: str):
-        """Defines what the input will have as an effect on the player, depending on his number and if the wanted action
-        is in the dictionary of said player.
-
-        Parameters
-        ----------
-        action: str
-            the input that will be checked within the player's assigned dictionary, to know if an action is available
-            or not."""
-        for v in action:
-            if self.inputs.get(v) is not None:
-                print(f"Set player {self.number} new speed.")
-                self.speed += self.inputs.get(v)
-                break
-
     def is_out(self):
+        """Used to put the player in the "IS_OUT" state to return the type more easily."""
         self.position = np.array([-1, -1])
         self.speed = np.array([0, 0])
 
     def state_check(self):
-        """Checks all the players' state to know if the game should stop or not.
+        """Checks a player's state to know if he can play, is out or has won.
 
         Parameters
         ----------
         None.
 
-        Returns
-        -------
-        1 if the game should continue.
-        2 if all players are out.
-        3 if one or more player has won."""
+        :return:  CAN_PLAY if the player can play, IS_OUT if the player is out of the game, HAS_WON if the player has won.
+        """
         if np.array_equal(self.position, np.array([-1, -1])):
             return PlayerState.IS_OUT
         if np.any(self.position < 0):
@@ -156,32 +163,11 @@ class Player:
             return PlayerState.HAS_WON
         return PlayerState.CAN_PLAY
 
-    def player_move(self, game_map: GameMap, player_value: int):
-        print(
-            f"Player {self.number} :",
-            self.name,
-            ", you are on coordinates ",
-            self.position,
-            ", and your speed is ",
-            self.speed,
-            ".",
-        )
-        actions = input("Choose a desired input: ")
-        self.player_action(actions)
-
-        path_state = self.path_checking(game_map, player_value)
-        if path_state == 1:
-            game_map.modify_tile_list_state(self.get_walk_coordinates(), player_value)
-            self.move()
-        elif (
-            path_state == 2
-        ):
-            self.is_out()
-            print("Wow ", self.name, ", you blew it! Now you can watch from the bench!")
-        elif path_state == 3:
-            self.position = np.array([1, 23])
-
     def get_walk_coordinates(self):
+        """Used to determine which tiles the player is going to go over on his next move.
+
+        :return: a tuple of tuples of indexes with the coordinates on the map of the tiles that will be walked on.
+        """
         max_len = np.absolute(self.speed).max()
         if max_len == 0:
             return (self.position[0],), (self.position[1],)
@@ -192,6 +178,68 @@ class Player:
         )
 
     def transform_to_tuples_positions(self, array: np.array):
+        """Used to transform an array containing arrays of coordinates to a tuple of tuples of indexes.
+
+        Parameters
+        ----------
+        array: np.array
+            the array containing the coordinates array.
+
+        :return: a tuple of tuples for coordinates.
+        """
         for x in array:
             x += self.position
         return tuple([tuple(elem) for elem in array.T])
+
+    def collision_speed_check(self, game_map: GameMap, speed: np.array = None):
+        """Used to know if the player can make a specific move or not (the speed being the desired change in the player's
+        speed) without being automatically being out of the game.
+
+        Parameters
+        ----------
+        game_map: GameMap
+            the map on which the player is evolving.
+        speed: np.array([,])
+            the speed modification the player desires to make
+
+        :return: True if the movement will lead to lose, False if the path is safe.
+        """
+        collision = False
+        if speed is not None:
+            x = int(self.speed[0] + speed[0])
+            y = int(self.speed[1] + speed[1])
+        else:
+            x = int(self.speed[0])
+            y = int(self.speed[1])
+        value_check = np.array([x, y])
+        max_speed = int(np.absolute(value_check).max())
+        x_interval = (
+            round(x - (max_speed**2 - max_speed) / 2),
+            round(x + (max_speed**2 - max_speed) / 2),
+        )
+        y_interval = (
+            round(y - (max_speed**2 - max_speed) / 2),
+            round(y + (max_speed**2 - max_speed) / 2),
+        )
+        for a in range(x_interval[0], x_interval[1] + 1):
+            for b in range(y_interval[0], y_interval[1] + 1):
+                try:
+                    if np.any(
+                        game_map.map[a + self.position[0], b + self.position[1]]
+                        & ~(512 + 2**self.number)
+                    ):
+                        collision = True
+                except IndexError:
+                    collision = True
+        return collision
+
+    def movement_validity(self):
+        """Used to know if the player has made a valid move in his turn, in order not to skip his turn completely.
+
+        :return: True if the player has made a valid move, False if not.
+        """
+        if np.array_equal(self.position, self.last_position):
+            return False
+        else:
+            self.last_position = self.position.copy()
+            return True
