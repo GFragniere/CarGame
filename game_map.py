@@ -51,8 +51,8 @@ class GameMap:
     modify_tile_list_state(index, tile_value)
         Used to modify a tile list with a tuple-tuple of indexes to a set value.
 
-    remove_previous_move(value
-        Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn,
+    remove_previous_move(value)
+        Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn),
         this method is used to erase this trace.
     """
 
@@ -161,7 +161,7 @@ class GameMap:
         self.map[index] |= tile_value
 
     def remove_previous_move(self, value: int):
-        """Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn,
+        """Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn),
         this method is used to erase this trace.
 
         Parameters

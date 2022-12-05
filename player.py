@@ -182,9 +182,7 @@ class Player:
         if max_len == 0:
             return (self.position[0],), (self.position[1],)
         return self.transform_to_tuples_positions(
-            np.array(
-                [(velocity / max_len * i).astype(int) for i in range(max_len + 1)]
-            )
+            np.array([(velocity / max_len * i).astype(int) for i in range(max_len + 1)])
         )
 
     def transform_to_tuples_positions(self, array: np.array):
@@ -219,7 +217,9 @@ class Player:
         y = int(self.speed[1] + acceleration[1])
         x_interval = round((x**2 + abs(x)) / 2)
         y_interval = round((y**2 + abs(y)) / 2)
-        path = self.path_checking(game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval]))
+        path = self.path_checking(
+            game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval])
+        )
         if self.position[0] + x < 0 or self.position[1] + y < 0:
             collision = True
             return collision

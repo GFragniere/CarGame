@@ -36,9 +36,9 @@ class MyGame:
                         if not self.game.player_list[0].collision_speed_check(
                             self.game.game_map, constants.default_inputs.get(event.key)
                         ):
-                            self.game.player_list[0].speed += constants.default_inputs.get(
-                                event.key
-                            )
+                            self.game.player_list[
+                                0
+                            ].speed += constants.default_inputs.get(event.key)
                             self.move_players()
                             break
 
