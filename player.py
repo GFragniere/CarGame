@@ -1,8 +1,13 @@
+import math
 from enum import Enum
 from CarGame.game_map import GameMap
 from CarGame.game_map import TileState
 import numpy as np
+import pygame
+import os
 import CarGame.constants as constants
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 class PlayerState(Enum):
@@ -69,6 +74,7 @@ class Player:
         speed: np.ndarray,
         name: str,
         inputs: dict = constants.default_inputs,
+        texture: pygame.image.load = pygame.image.load("image/red_car.png"),
     ):
         """
         Parameters
@@ -89,14 +95,14 @@ class Player:
         self.speed = speed
         self.name = name
         self.inputs = inputs
-        self.last_position = np.array(
-            [0, 0]
-        )  # The last position of a player, used to verify he made an action in his
-        # turn, and not skip his turn.
+        self.texture = pygame.transform.scale(texture, constants.DEFAULT_SIZE)
+        self.displayed_texture = pygame.transform.rotate(self.texture, 0)
+        self.has_played = True
 
     def move(self):
         """Uses the player speed and current location to make him go to a new tile."""
         self.position += self.speed
+        self.has_played = True
 
     def path_checking(self, game_map: GameMap):
         """Used to check if the player can go from his current position to the next one when moving.
@@ -191,7 +197,7 @@ class Player:
             x += self.position
         return tuple([tuple(elem) for elem in array.T])
 
-    def collision_speed_check(self, game_map: GameMap, speed: np.array = None):
+    def collision_speed_check(self, game_map: GameMap, acceleration: np.array):
         """Used to know if the player can make a specific move or not (the speed being the desired change in the player's
         speed) without being automatically being out of the game.
 
@@ -205,12 +211,8 @@ class Player:
         :return: True if the movement will lead to lose, False if the path is safe.
         """
         collision = False
-        if speed is not None:
-            x = int(self.speed[0] + speed[0])
-            y = int(self.speed[1] + speed[1])
-        else:
-            x = int(self.speed[0])
-            y = int(self.speed[1])
+        x = int(self.speed[0] + acceleration[0])
+        y = int(self.speed[1] + acceleration[1])
         value_check = np.array([x, y])
         max_speed = int(np.absolute(value_check).max())
         x_interval = (
@@ -221,6 +223,9 @@ class Player:
             round(y - (max_speed**2 - max_speed) / 2),
             round(y + (max_speed**2 - max_speed) / 2),
         )
+        if self.position[0] + x < 0 or self.position[1] + y < 0:
+            collision = True
+            return collision
         for a in range(x_interval[0], x_interval[1] + 1):
             for b in range(y_interval[0], y_interval[1] + 1):
                 try:
@@ -238,8 +243,58 @@ class Player:
 
         :return: True if the player has made a valid move, False if not.
         """
-        if np.array_equal(self.position, self.last_position):
-            return False
-        else:
-            self.last_position = self.position.copy()
+        if self.has_played:
+            self.has_played = False
             return True
+        else:
+            return False
+
+    def draw(self, window: pygame.display):
+
+        if self.speed[0] == 0 and self.speed[1] == 0:
+            pass
+        elif self.speed[0] == 0:
+            if self.speed[1] > 0:
+                self.displayed_texture = pygame.transform.rotate(self.texture, 180)
+            else:
+                self.displayed_texture = pygame.transform.rotate(self.texture, 0)
+        elif self.speed[1] == 0:
+            if self.speed[0] > 0:
+                self.displayed_texture = pygame.transform.rotate(self.texture, 270)
+            else:
+                self.displayed_texture = pygame.transform.rotate(self.texture, 90)
+        elif abs(self.speed[0]) + abs(self.speed[1]) == abs(
+            self.speed[0] + self.speed[1]
+        ):
+            if np.array_equal(np.absolute(self.speed), self.speed):
+                self.displayed_texture = pygame.transform.rotate(
+                    self.texture,
+                    180 + math.degrees(math.atan(abs(self.speed[0] / self.speed[1]))),
+                )
+            else:
+                self.displayed_texture = pygame.transform.rotate(
+                    self.texture,
+                    math.degrees(math.atan(abs(self.speed[0] / self.speed[1]))),
+                )
+        elif self.speed[0] != self.speed[1]:
+            if self.speed[0] > 0:
+                self.displayed_texture = pygame.transform.rotate(
+                    self.texture,
+                    270 + math.degrees(math.atan(abs(self.speed[1] / self.speed[0]))),
+                )
+            else:
+                self.displayed_texture = pygame.transform.rotate(
+                    self.texture,
+                    90 + math.degrees(math.atan(abs(self.speed[1] / self.speed[0]))),
+                )
+        pygame.draw.rect(
+            window,
+            (47, 9, 9),
+            (
+                (self.speed[0] + self.position[0]) * constants.tile_width,
+                (self.speed[1] + self.position[1]) * constants.tile_height,
+                constants.tile_width,
+                constants.tile_height,
+            ),
+        )
+        window.blit(self.displayed_texture, (self.position * constants.tile_width))

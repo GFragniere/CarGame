@@ -1,4 +1,6 @@
 import numpy as np
+import pygame
+import constants
 
 # from CarGame.player import Player
 from enum import Flag, auto
@@ -169,3 +171,56 @@ class GameMap:
             the value from which the map has to be removed of.
         """
         self.map &= ~value
+
+    def draw(self, window: pygame.display):
+        for a in range(self.width):
+            for b in range(self.height):
+                if self.map[a, b] == TileState.WALL.value:
+                    pygame.draw.rect(
+                        window,
+                        (139, 69, 19),
+                        (
+                            a * constants.tile_width,
+                            b * constants.tile_height,
+                            constants.tile_width,
+                            constants.tile_height,
+                        ),
+                    )
+                elif self.map[a, b] == TileState.WIN.value:
+                    pygame.draw.rect(
+                        window,
+                        (255, 255, 255),
+                        (
+                            a * constants.tile_width,
+                            b * constants.tile_height,
+                            constants.tile_width,
+                            constants.tile_height,
+                        ),
+                    )
+                else:
+                    pygame.draw.rect(
+                        window,
+                        (55, 55, 55),
+                        (
+                            a * constants.tile_width,
+                            b * constants.tile_height,
+                            constants.tile_width,
+                            constants.tile_height,
+                        ),
+                    )
+
+        for x in range(self.width):
+            pygame.draw.line(
+                window,
+                (0, 0, 0),
+                (x * constants.tile_height, 0),
+                (x * constants.tile_height, constants.window_height),
+            )
+
+        for y in range(self.height):
+            pygame.draw.line(
+                window,
+                (0, 0, 0),
+                (0, y * constants.tile_width),
+                (constants.window_width, y * constants.tile_width),
+            )
