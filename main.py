@@ -3,8 +3,8 @@ import os
 import pygame
 import constants
 
-from CarGame.game import Game
-from CarGame.player import PlayerState
+from game import Game
+from player import PlayerState
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -32,14 +32,15 @@ class MyGame:
                     self.running = False
                     break
                 else:
-                    if not self.game.player_list[0].collision_speed_check(
-                        self.game.game_map, constants.default_inputs[event.key]
-                    ):
-                        self.game.player_list[0].speed += constants.default_inputs[
-                            event.key
-                        ]
-                        self.move_players()
-                        break
+                    if constants.default_inputs.get(event.key) is not None:
+                        if not self.game.player_list[0].collision_speed_check(
+                            self.game.game_map, constants.default_inputs.get(event.key)
+                        ):
+                            self.game.player_list[0].speed += constants.default_inputs.get(
+                                event.key
+                            )
+                            self.move_players()
+                            break
 
     def render(self):
         self.window.fill((0, 0, 0))
@@ -65,15 +66,9 @@ class MyGame:
                 continue
             self.render()
 
-    def player_check(self):
-        if self.game.player_list[0].state_check == PlayerState.IS_OUT:
-            self.running = False
-        if self.game.player_list[0].state_check == PlayerState.HAS_WON:
-            self.running = False
-
     def move_players(self):
         if self.game.player_list[0].path_checking(self.game.game_map) == 1:
-            self.game.player_list[0].move()
+            self.game.player_list[0].plays()
         else:
             self.running = False
             print("Game ending, processing results...")

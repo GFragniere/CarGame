@@ -1,6 +1,6 @@
-from CarGame.game_map import GameMap
-from CarGame.player import Player
-from CarGame.player import PlayerState
+from game_map import GameMap
+from player import Player
+from player import PlayerState
 import numpy as np
 
 

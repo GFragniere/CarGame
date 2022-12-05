@@ -1,11 +1,11 @@
 import math
 from enum import Enum
-from CarGame.game_map import GameMap
-from CarGame.game_map import TileState
+from game_map import GameMap
+from game_map import TileState
 import numpy as np
 import pygame
 import os
-import CarGame.constants as constants
+import constants as constants
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -99,12 +99,12 @@ class Player:
         self.displayed_texture = pygame.transform.rotate(self.texture, 0)
         self.has_played = True
 
-    def move(self):
+    def plays(self):
         """Uses the player speed and current location to make him go to a new tile."""
         self.position += self.speed
         self.has_played = True
 
-    def path_checking(self, game_map: GameMap):
+    def path_checking(self, game_map: GameMap, velocity=None):
         """Used to check if the player can go from his current position to the next one when moving.
 
         We are calling on the method get_walk_coordinates to return the values of each tile the player will go through,
@@ -121,20 +121,22 @@ class Player:
           2 if the path will lead to a crash;
          3 if the path will lead to a win.
         """
+        if velocity is None:
+            velocity = self.speed.copy()
         if self.state_check() == PlayerState.IS_OUT:
             path = 2
             return path
         path = 1
         if np.any(
             np.greater(
-                (self.speed + self.position),
+                (velocity + self.position),
                 np.array([39, 24]),
             )
         ):
             path = 2
             return path
         path_tile = game_map.get_tile_list_type(
-            self.get_walk_coordinates(), 2**self.number
+            self.get_walk_coordinates(velocity), 2**self.number
         )
         if sum(path_tile) > 0:
             for elem in path_tile:
@@ -169,17 +171,19 @@ class Player:
             return PlayerState.HAS_WON
         return PlayerState.CAN_PLAY
 
-    def get_walk_coordinates(self):
+    def get_walk_coordinates(self, velocity=None):
         """Used to determine which tiles the player is going to go over on his next move.
 
         :return: a tuple of tuples of indexes with the coordinates on the map of the tiles that will be walked on.
         """
-        max_len = np.absolute(self.speed).max()
+        if velocity is None:
+            velocity = self.speed.copy()
+        max_len = np.absolute(velocity).max()
         if max_len == 0:
             return (self.position[0],), (self.position[1],)
         return self.transform_to_tuples_positions(
             np.array(
-                [(self.speed / max_len * i).astype(int) for i in range(max_len + 1)]
+                [(velocity / max_len * i).astype(int) for i in range(max_len + 1)]
             )
         )
 
@@ -213,29 +217,16 @@ class Player:
         collision = False
         x = int(self.speed[0] + acceleration[0])
         y = int(self.speed[1] + acceleration[1])
-        value_check = np.array([x, y])
-        max_speed = int(np.absolute(value_check).max())
-        x_interval = (
-            round(x - (max_speed**2 - max_speed) / 2),
-            round(x + (max_speed**2 - max_speed) / 2),
-        )
-        y_interval = (
-            round(y - (max_speed**2 - max_speed) / 2),
-            round(y + (max_speed**2 - max_speed) / 2),
-        )
+        x_interval = round((x**2 + abs(x)) / 2)
+        y_interval = round((y**2 + abs(y)) / 2)
+        path = self.path_checking(game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval]))
         if self.position[0] + x < 0 or self.position[1] + y < 0:
             collision = True
             return collision
-        for a in range(x_interval[0], x_interval[1] + 1):
-            for b in range(y_interval[0], y_interval[1] + 1):
-                try:
-                    if np.any(
-                        game_map.map[a + self.position[0], b + self.position[1]]
-                        & ~(512 + 2**self.number)
-                    ):
-                        collision = True
-                except IndexError:
-                    collision = True
+        if path == 1:
+            collision = False
+        elif path == 2:
+            collision = True
         return collision
 
     def movement_validity(self):
@@ -287,6 +278,7 @@ class Player:
                     self.texture,
                     90 + math.degrees(math.atan(abs(self.speed[1] / self.speed[0]))),
                 )
+                # TODO: Enlever les "if", faire plus petit
         pygame.draw.rect(
             window,
             (47, 9, 9),
