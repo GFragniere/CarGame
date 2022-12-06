@@ -174,7 +174,8 @@ class Player:
         ----------
         None.
 
-        :return:  CAN_PLAY if the player can play, IS_OUT if the player is out of the game, HAS_WON if the player has won.
+        :return:  CAN_PLAY if the player can play, IS_OUT if the player is out of the game,
+        HAS_WON if the player has won.
         """
         if np.array_equal(self.position, np.array([-1, -1])):
             return PlayerState.IS_OUT
@@ -214,8 +215,8 @@ class Player:
         return tuple([tuple(elem) for elem in array.T])
 
     def collision_speed_check(self, game_map: GameMap, acceleration: np.array):
-        """Used to know if the player can make a specific move or not (the speed being the desired change in the player's
-        speed) without being automatically being out of the game.
+        """Used to know if the player can make a specific move or not (the speed being the desired change
+        in the player's speed) without being automatically being out of the game.
 
         Parameters
         ----------

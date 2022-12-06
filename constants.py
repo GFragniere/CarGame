@@ -17,4 +17,3 @@ default_inputs = {
 window_width = 1280
 window_height = 800
 window_size = (window_width, window_height)
-
