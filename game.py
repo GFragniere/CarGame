@@ -1,7 +1,9 @@
 from game_map import GameMap
 from player import Player
 from player import PlayerState
+import constants as cst
 import numpy as np
+import pygame
 
 
 class Game:
@@ -81,3 +83,9 @@ class Game:
     def update(self, player: Player):
         """Used to remove the previous move of the player."""
         self.game_map.remove_previous_move(2 ** (player.number - 1))
+
+    def draw(self, window: pygame.display):
+        tile_size = int(pygame.display.get_window_size()[0] / self.game_map.width)
+        self.game_map.draw(window, tile_size)
+        for player in self.player_list:
+            player.draw(window, tile_size)

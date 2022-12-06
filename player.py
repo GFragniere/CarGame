@@ -95,8 +95,9 @@ class Player:
         self.speed = speed
         self.name = name
         self.inputs = inputs
-        self.texture = pygame.transform.scale(texture, constants.DEFAULT_SIZE)
-        self.displayed_texture = pygame.transform.rotate(self.texture, 0)
+        self.texture = pygame.image.load("image/red_car.png")
+        self.scaled_texture = None
+        self.displayed_texture = None
         self.has_played = True
 
     def plays(self):
@@ -240,53 +241,28 @@ class Player:
         else:
             return False
 
-    def draw(self, window: pygame.display):
-
-        if self.speed[0] == 0 and self.speed[1] == 0:
-            pass
-        elif self.speed[0] == 0:
-            if self.speed[1] > 0:
-                self.displayed_texture = pygame.transform.rotate(self.texture, 180)
-            else:
-                self.displayed_texture = pygame.transform.rotate(self.texture, 0)
-        elif self.speed[1] == 0:
-            if self.speed[0] > 0:
-                self.displayed_texture = pygame.transform.rotate(self.texture, 270)
-            else:
-                self.displayed_texture = pygame.transform.rotate(self.texture, 90)
-        elif abs(self.speed[0]) + abs(self.speed[1]) == abs(
-            self.speed[0] + self.speed[1]
-        ):
-            if np.array_equal(np.absolute(self.speed), self.speed):
-                self.displayed_texture = pygame.transform.rotate(
-                    self.texture,
-                    180 + math.degrees(math.atan(abs(self.speed[0] / self.speed[1]))),
-                )
-            else:
-                self.displayed_texture = pygame.transform.rotate(
-                    self.texture,
-                    math.degrees(math.atan(abs(self.speed[0] / self.speed[1]))),
-                )
-        elif self.speed[0] != self.speed[1]:
-            if self.speed[0] > 0:
-                self.displayed_texture = pygame.transform.rotate(
-                    self.texture,
-                    270 + math.degrees(math.atan(abs(self.speed[1] / self.speed[0]))),
-                )
-            else:
-                self.displayed_texture = pygame.transform.rotate(
-                    self.texture,
-                    90 + math.degrees(math.atan(abs(self.speed[1] / self.speed[0]))),
-                )
-                # TODO: Enlever les "if", faire plus petit
+    def draw(self, window: pygame.display, tile_size: int):
+        angle = None
+        if self.scaled_texture is None:
+            self.scaled_texture = pygame.transform.scale(self.texture, (tile_size, tile_size))
+        if self.displayed_texture is None:
+            self.displayed_texture = self.scaled_texture
+        if self.speed[1] == 0:
+            angle = 180 + (90 * np.sign(self.speed[0]))
+        elif self.speed[1] > 0:
+            angle = 180 + math.degrees(math.atan(self.speed[0] / self.speed[1]))
+        else:
+            angle = math.degrees(math.atan(self.speed[0] / self.speed[1]))
+        if angle is not None:
+            self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
         pygame.draw.rect(
             window,
             (47, 9, 9),
             (
-                (self.speed[0] + self.position[0]) * constants.tile_width,
-                (self.speed[1] + self.position[1]) * constants.tile_height,
-                constants.tile_width,
-                constants.tile_height,
+                (self.speed[0] + self.position[0]) * tile_size,
+                (self.speed[1] + self.position[1]) * tile_size,
+                tile_size,
+                tile_size,
             ),
         )
-        window.blit(self.displayed_texture, (self.position * constants.tile_width))
+        window.blit(self.displayed_texture, (self.position * tile_size))

@@ -4,7 +4,6 @@ import pygame
 import constants
 
 from game import Game
-from player import PlayerState
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -19,7 +18,7 @@ class MyGame:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game = Game()
-        self.game.new_player(1, "Didier", np.array([1, 3]))
+        self.game.new_player(1, "temporary_name", np.array([1, 3]))
 
     def process_input(self):
 
@@ -44,8 +43,7 @@ class MyGame:
 
     def render(self):
         self.window.fill((0, 0, 0))
-        self.game.game_map.draw(self.window)
-        self.game.player_list[0].draw(self.window)
+        self.game.draw(self.window)
         if self.game.player_list[0].collision_speed_check(
             self.game.game_map, np.array([0, 0])
         ):

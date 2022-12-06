@@ -18,7 +18,3 @@ window_width = 1280
 window_height = 800
 window_size = (window_width, window_height)
 
-tile_width = 32
-tile_height = tile_width
-
-DEFAULT_SIZE = (32, 32)

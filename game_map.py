@@ -172,7 +172,7 @@ class GameMap:
         """
         self.map &= ~value
 
-    def draw(self, window: pygame.display):
+    def draw(self, window: pygame.display, tile_size: int): # Utiliser le display pour connaître la taille de tuile
         for a in range(self.width):
             for b in range(self.height):
                 if self.map[a, b] == TileState.WALL.value:
@@ -180,10 +180,10 @@ class GameMap:
                         window,
                         (139, 69, 19),
                         (
-                            a * constants.tile_width,
-                            b * constants.tile_height,
-                            constants.tile_width,
-                            constants.tile_height,
+                            a * tile_size,
+                            b * tile_size,
+                            tile_size,
+                            tile_size,
                         ),
                     )
                 elif self.map[a, b] == TileState.WIN.value:
@@ -191,21 +191,21 @@ class GameMap:
                         window,
                         (255, 255, 255),
                         (
-                            a * constants.tile_width,
-                            b * constants.tile_height,
-                            constants.tile_width,
-                            constants.tile_height,
+                            a * tile_size,
+                            b * tile_size,
+                            tile_size,
+                            tile_size,
                         ),
                     )
                 else:
                     pygame.draw.rect(
                         window,
-                        (55, 55, 55),
+                        (55 + self.map[a, b], 55, 55),
                         (
-                            a * constants.tile_width,
-                            b * constants.tile_height,
-                            constants.tile_width,
-                            constants.tile_height,
+                            a * tile_size,
+                            b * tile_size,
+                            tile_size,
+                            tile_size,
                         ),
                     )
 
@@ -213,14 +213,14 @@ class GameMap:
             pygame.draw.line(
                 window,
                 (0, 0, 0),
-                (x * constants.tile_height, 0),
-                (x * constants.tile_height, constants.window_height),
+                (x * tile_size, 0),
+                (x * tile_size, constants.window_height),
             )
 
         for y in range(self.height):
             pygame.draw.line(
                 window,
                 (0, 0, 0),
-                (0, y * constants.tile_width),
-                (constants.window_width, y * constants.tile_width),
+                (0, y * tile_size),
+                (constants.window_width, y * tile_size),
             )
