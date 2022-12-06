@@ -172,7 +172,7 @@ class GameMap:
         """
         self.map &= ~value
 
-    def draw(self, window: pygame.display, tile_size: int): # Utiliser le display pour connaître la taille de tuile
+    def draw(self, window: pygame.display, tile_size: int):
         for a in range(self.width):
             for b in range(self.height):
                 if self.map[a, b] == TileState.WALL.value:

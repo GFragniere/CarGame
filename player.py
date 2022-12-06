@@ -242,7 +242,6 @@ class Player:
             return False
 
     def draw(self, window: pygame.display, tile_size: int):
-        angle = None
         if self.scaled_texture is None:
             self.scaled_texture = pygame.transform.scale(self.texture, (tile_size, tile_size))
         if self.displayed_texture is None:
@@ -253,8 +252,7 @@ class Player:
             angle = 180 + math.degrees(math.atan(self.speed[0] / self.speed[1]))
         else:
             angle = math.degrees(math.atan(self.speed[0] / self.speed[1]))
-        if angle is not None:
-            self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
+        self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
         pygame.draw.rect(
             window,
             (47, 9, 9),
