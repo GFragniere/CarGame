@@ -13,15 +13,15 @@ players, as well as a small AI that you can play against.
 When you launch the program, you'll have a window that pops up, showing you the base map of the game. Once you want
 to move, you can use a key on the numpad in order to make one of the following move:
 
-    5. Keep the same speed
-    6. Accelerate to the right
-    2. Accelerate downwards
-    4. Accelerate to the left
-    8. Accelerate upwards
-    9. Accelerate up-right
-    3. Accelerate down-right
-    1. Accelerate down-left
-    7. Accelerate up-left
+    5: Keep the same speed
+    6: Accelerate to the right
+    2: Accelerate downwards
+    4: Accelerate to the left
+    8: Accelerate upwards
+    9: Accelerate up-right
+    3: Accelerate down-right
+    1: Accelerate down-left
+    7: Accelerate up-left
 
 In order to know where you'll end up on your next move, there is a small red-ish square that indicates you where you'll
 end up if you keep the same speed.
