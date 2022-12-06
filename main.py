@@ -4,6 +4,7 @@ import pygame
 import constants
 
 from game import Game
+from player import Player
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -19,8 +20,9 @@ class MyGame:
         self.running = True
         self.game = Game()
         self.game.new_player(1, "temporary_name", np.array([1, 3]))
+        # self.game.new_player(2, "aaaa", np.array([1, 5]))
 
-    def process_input(self):
+    def process_input(self, player: Player):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -32,41 +34,42 @@ class MyGame:
                     break
                 else:
                     if constants.default_inputs.get(event.key) is not None:
-                        if not self.game.player_list[0].collision_speed_check(
+                        if not player.collision_speed_check(
                             self.game.game_map, constants.default_inputs.get(event.key)
                         ):
-                            self.game.player_list[
-                                0
-                            ].speed += constants.default_inputs.get(event.key)
-                            self.move_players()
+                            player.speed += constants.default_inputs.get(event.key)
+                            self.move_player(player)
                             break
 
     def render(self):
         self.window.fill((0, 0, 0))
         self.game.draw(self.window)
-        if self.game.player_list[0].collision_speed_check(
-            self.game.game_map, np.array([0, 0])
-        ):
-            pygame.draw.polygon(
-                self.window, (200, 50, 50), [(80, 60), (40, 130), (120, 130)]
-            )
-            pygame.draw.polygon(
-                self.window, (255, 255, 255), [(80, 70), (48, 125), (112, 125)]
-            )
-            pygame.draw.rect(self.window, (0, 0, 0), (77, 85, 6, 20))
-            pygame.draw.circle(self.window, (0, 0, 0), (80, 115), 4)
+        for player in self.game.player_list:
+            if player.collision_speed_check(
+                self.game.game_map, np.array([0, 0])
+            ):
+                pygame.draw.polygon(
+                    self.window, (200, 50, 50), [(80, 60), (40, 130), (120, 130)]
+                )
+                pygame.draw.polygon(
+                    self.window, (255, 255, 255), [(80, 70), (48, 125), (112, 125)]
+                )
+                pygame.draw.rect(self.window, (0, 0, 0), (77, 85, 6, 20))
+                pygame.draw.circle(self.window, (0, 0, 0), (80, 115), 4)
         pygame.display.update()
 
     def run(self):
         while self.running:
-            self.process_input()
-            if not self.game.player_list[0].movement_validity():
-                continue
-            self.render()
+            for player in self.game.player_list:
+                self.process_input(player)
+                if not player.movement_validity():
+                    continue
+                self.render()
+            self.game.player_state_reset()
 
-    def move_players(self):
-        if self.game.player_list[0].path_checking(self.game.game_map) == 1:
-            self.game.player_list[0].plays()
+    def move_player(self, player: Player):
+        if player.path_checking(self.game.game_map) == 1:
+            player.plays()
         else:
             self.running = False
             print("Game ending, processing results...")
