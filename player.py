@@ -156,7 +156,7 @@ class Player:
             for elem in path_tile:
                 if elem == TileState.WIN.value:
                     path = 3
-                    break
+
                 elif not elem == 0:
                     path = 2
                     break
@@ -250,7 +250,6 @@ class Player:
         :return: True if the player has made a valid move, False if not.
         """
         if self.has_played:
-            self.has_played = False
             return True
         else:
             return False
@@ -290,3 +289,6 @@ class Player:
             ),
         )
         window.blit(self.displayed_texture, (self.position * tile_size))
+
+    def can_play(self):
+        self.has_played = False
