@@ -27,8 +27,8 @@ In order to know where you'll end up on your next move, there is a small red-ish
 end up if you keep the same speed.
 
 ## Goal
-The objective of the game is to reach the finish line (white squares at the end) without colliding with another
-player or with a wall (in brown color). The road is represented by the grey colored square.
+The objective of the game is to reach the finish line (white squares at the bottom left part of the screen) without 
+colliding with another player or with a wall (in brown color). The road is represented by the grey colored square.
 
 The game is coded in a way that you technically can't make a move that would lead you to lose (i.e. accelerating
 and making you automatically lose, because you'd have too much speed to stop before a wall), but can be messy in 
