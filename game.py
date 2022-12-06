@@ -99,3 +99,12 @@ class Game:
         self.game_map.draw(window, tile_size)
         for player in self.player_list:
             player.draw(window, tile_size)
+
+    def player_state_reset(self):
+        count = 0
+        for player in self.player_list:
+            if player.has_played:
+                count += 1
+        if count == len(self.player_list):
+            for player in self.player_list:
+                player.can_play()
