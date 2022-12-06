@@ -52,8 +52,11 @@ class GameMap:
         Used to modify a tile list with a tuple-tuple of indexes to a set value.
 
     remove_previous_move(value)
-        Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn),
-        this method is used to erase this trace.
+        Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last
+        turn), this method is used to erase this trace.
+
+    draw(window, tile_size)
+        Used to draw the game_map on the window.
     """
 
     def __init__(self, width: int, height: int):
@@ -161,8 +164,8 @@ class GameMap:
         self.map[index] |= tile_value
 
     def remove_previous_move(self, value: int):
-        """Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last turn),
-        this method is used to erase this trace.
+        """Used to remove the previous move of a player (each player will leave a "trace" of his movement from the last
+        turn), this method is used to erase this trace.
 
         Parameters
         ----------
@@ -173,6 +176,16 @@ class GameMap:
         self.map &= ~value
 
     def draw(self, window: pygame.display, tile_size: int):
+        """Used to draw the game_map on the window.
+
+        Parameters
+        ----------
+
+        window: pygame.display
+            the window on which the map has to draw itself
+        tile_size: int
+            the size of a tile, calculated in the Game class
+        """
         for a in range(self.width):
             for b in range(self.height):
                 if self.map[a, b] == TileState.WALL.value:

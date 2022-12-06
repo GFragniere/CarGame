@@ -1,7 +1,5 @@
 from game_map import GameMap
 from player import Player
-from player import PlayerState
-import constants as cst
 import numpy as np
 import pygame
 
@@ -28,6 +26,10 @@ class Game:
 
     update(self, player: Player):
         used to remove the previous move of the player.
+
+    draw(window)
+        A small draw method that calls on each player's draw method, as well as the map's draw method to draw
+        everything on the window.
     """
 
     def __init__(self):
@@ -85,6 +87,14 @@ class Game:
         self.game_map.remove_previous_move(2 ** (player.number - 1))
 
     def draw(self, window: pygame.display):
+        """A small draw method that calls on each player's draw method, as well as the map's draw method to draw
+        everything on the window.
+
+        Parameters
+        ----------
+
+        window: pygame.display
+            the window on which everything will be drawn"""
         tile_size = int(pygame.display.get_window_size()[0] / self.game_map.width)
         self.game_map.draw(window, tile_size)
         for player in self.player_list:

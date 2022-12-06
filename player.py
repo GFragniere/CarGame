@@ -47,22 +47,33 @@ class Player:
     -------
     move()
         Used to make the player go to his next tile, based on his current speed and position.
+
     path_checking(game_map)
         used to know if the player can go from his current position to his new one, without colliding with a player or
         going on/over a tile that can't be run on.
+
     is_out()
         used to put the player in the "IS_OUT" state to return the type more easily.
+
     state_check()
         used to know if the player can play, is out or has won.
+
     get_walk_coordinates()
         used to determine which tiles the player is going to go over on his next move.
+
     transform_to_tuples_positions(array)
         used to transform an array containing arrays of coordinates to a tuple of tuples of indexes.
+
     collision_speed_check(game_map, speed = None)
         used to know if the player can make a specific move or not (the speed being the desired change in the player's
         speed) without being automatically being out of the game.
+
     movement_validity()
         used to know if the player has made a valid move in his turn, in order not to skip his turn completely.
+
+    draw(window, tile_size)
+        A method used to draw the player's car image, rotating according to his direction, as well as the tile
+        he would land on in his next move if he keeps the same speed.
 
 
     """
@@ -74,7 +85,7 @@ class Player:
         speed: np.ndarray,
         name: str,
         inputs: dict = constants.default_inputs,
-        texture: pygame.image.load = pygame.image.load("image/red_car.png"),
+        texture=pygame.image.load("image/red_car.png"),
     ):
         """
         Parameters
@@ -89,13 +100,15 @@ class Player:
             chosen by each player at the beginning of the game to recognize themselves.
         inputs: dict (optional)
             the dictionary of the player's movement possibilities, has a default value of constants.default_inputs.
+        texture (optional)
+            the texture of the player on the game, defaulting to a red car.
         """
         self.number = number
         self.position = position
         self.speed = speed
         self.name = name
         self.inputs = inputs
-        self.texture = pygame.image.load("image/red_car.png")
+        self.texture = texture
         self.scaled_texture = None
         self.displayed_texture = None
         self.has_played = True
@@ -242,6 +255,18 @@ class Player:
             return False
 
     def draw(self, window: pygame.display, tile_size: int):
+        """A method used to draw the player's car image, rotating according to his direction, as well as the tile
+        he would land on in his next move if he keeps the same speed.
+
+        Parameters
+        ----------
+
+        window: pygame.display
+            the window on which the player's image and next move have to be drawn on
+
+        tile_size: int
+            the size of a tile in the current window size
+        """
         if self.scaled_texture is None:
             self.scaled_texture = pygame.transform.scale(self.texture, (tile_size, tile_size))
         if self.displayed_texture is None:
