@@ -213,7 +213,7 @@ class GameMap:
                 else:
                     pygame.draw.rect(
                         window,
-                        (55 + self.map[a, b], 55, 55),
+                        (55 + (self.map[a, b] * 30), 55, 55),
                         (
                             a * tile_size,
                             b * tile_size,
