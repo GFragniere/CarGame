@@ -227,7 +227,6 @@ class Player:
 
         :return: True if the movement will lead to lose, False if the path is safe.
         """
-        collision = False
         x = int(self.speed[0] + acceleration[0])
         y = int(self.speed[1] + acceleration[1])
         x_interval = round((x**2 + abs(x)) / 2)
@@ -236,13 +235,10 @@ class Player:
             game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval])
         )
         if self.position[0] + x < 0 or self.position[1] + y < 0:
-            collision = True
-            return collision
-        if path == 1:
-            collision = False
-        elif path == 2:
-            collision = True
-        return collision
+            return True
+        if path == 2:
+            return True
+        return True
 
     def movement_validity(self):
         """Used to know if the player has made a valid move in his turn, in order not to skip his turn completely.
