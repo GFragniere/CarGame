@@ -146,7 +146,7 @@ class Player:
                 (velocity + self.position),
                 np.array([39, 24]),
             )
-        ):
+        ) or np.any(np.less((self.position + velocity), np.array([0, 0]))):
             path = 2
             return path
         path_tile = game_map.get_tile_list_type(
@@ -227,18 +227,20 @@ class Player:
 
         :return: True if the movement will lead to lose, False if the path is safe.
         """
+        print(acceleration)
         x = int(self.speed[0] + acceleration[0])
         y = int(self.speed[1] + acceleration[1])
         x_interval = round((x**2 + abs(x)) / 2)
         y_interval = round((y**2 + abs(y)) / 2)
-        path = self.path_checking(
+        path1 = self.path_checking(
             game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval])
         )
-        if self.position[0] + x < 0 or self.position[1] + y < 0:
+        path2 = self.path_checking(game_map, np.array([x, y]))
+        if self.position[0] + x_interval < 0 or self.position[1] + y_interval < 0:
             return True
-        if path == 2:
+        if path1 == 2 or path2 == 2:
             return True
-        return True
+        return False
 
     def movement_validity(self):
         """Used to know if the player has made a valid move in his turn, in order not to skip his turn completely.
