@@ -19,8 +19,9 @@ class MyGame:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game = Game()
-        self.game.new_player(1, "temporary_name", np.array([1, 3]))
-        # self.game.new_player(2, "temporary_name", np.array([1, 5]))
+        self.game.new_player(0, "temporary_name", np.array([1, 3]))
+        self.game.new_player(1, "temporary_name", np.array([1, 5]))
+        self.turn_count = 0
 
     def process_input(self, player: Player):
 
@@ -43,7 +44,7 @@ class MyGame:
 
     def render(self):
         self.window.fill((0, 0, 0))
-        self.game.draw(self.window)
+        self.game.draw(self.window, self.turn_count)
         for player in self.game.player_list:
             if player.collision_speed_check(
                 self.game.game_map, np.array([0, 0])
@@ -61,11 +62,14 @@ class MyGame:
     def run(self):
         while self.running:
             for player in self.game.player_list:
-                self.process_input(player)
-                if not player.movement_validity():
-                    continue
-                self.render()
-            self.game.player_state_reset()
+                if player.number == self.turn_count:
+                    self.process_input(player)
+                    if not player.movement_validity():
+                        continue
+                    self.turn_count += 1
+                    self.turn_count %= len(self.game.player_list)
+                    self.render()
+                    self.game.player_state_reset()
 
     def move_player(self, player: Player):
         if player.path_checking(self.game.game_map) == 1:

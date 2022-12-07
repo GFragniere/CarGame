@@ -41,6 +41,7 @@ class Game:
         self.player_list = []
         self.game_map = GameMap(40, 25)
         self.game_map.base_map()
+        self.tile_size = 0
 
     def new_player(
         self,
@@ -86,7 +87,7 @@ class Game:
         """Used to remove the previous move of the player."""
         self.game_map.remove_previous_move(2 ** (player.number - 1))
 
-    def draw(self, window: pygame.display):
+    def draw(self, window: pygame.display, turn: int):
         """A small draw method that calls on each player's draw method, as well as the map's draw method to draw
         everything on the window.
 
@@ -95,10 +96,10 @@ class Game:
 
         window: pygame.display
             the window on which everything will be drawn"""
-        tile_size = int(pygame.display.get_window_size()[0] / self.game_map.width)
-        self.game_map.draw(window, tile_size)
+        self.tile_size = int(pygame.display.get_window_size()[0] / self.game_map.width)
+        self.game_map.draw(window, self.tile_size)
         for player in self.player_list:
-            player.draw(window, tile_size)
+            player.draw(window, self.tile_size, turn)
 
     def player_state_reset(self):
         count = 0

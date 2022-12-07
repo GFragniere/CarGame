@@ -144,7 +144,7 @@ class Player:
         if np.any(
             np.greater(
                 (velocity + self.position),
-                np.array([39, 24]),
+                np.array([game_map.width - 1, game_map.height - 1]),
             )
         ) or np.any(np.less((self.position + velocity), np.array([0, 0]))):
             path = 2
@@ -156,7 +156,6 @@ class Player:
             for elem in path_tile:
                 if elem == TileState.WIN.value:
                     path = 3
-
                 elif not elem == 0:
                     path = 2
                     break
@@ -227,7 +226,6 @@ class Player:
 
         :return: True if the movement will lead to lose, False if the path is safe.
         """
-        print(acceleration)
         x = int(self.speed[0] + acceleration[0])
         y = int(self.speed[1] + acceleration[1])
         x_interval = round((x**2 + abs(x)) / 2)
@@ -252,7 +250,7 @@ class Player:
         else:
             return False
 
-    def draw(self, window: pygame.display, tile_size: int):
+    def draw(self, window: pygame.display, tile_size: int, turn: int):
         """A method used to draw the player's car image, rotating according to his direction, as well as the tile
         he would land on in his next move if he keeps the same speed.
 
@@ -287,6 +285,12 @@ class Player:
             ),
         )
         window.blit(self.displayed_texture, (self.position * tile_size))
+        if turn == self.number:
+            self.draw_arrow(window, tile_size)
+
+    def draw_arrow(self, window, tile_size: int):
+        player_pos = self.position * tile_size
+        pygame.draw.rect(window, (200,200,200), (player_pos[0] + 12, player_pos[1] - 32, 8, 16))
 
     def can_play(self):
         self.has_played = False
