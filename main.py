@@ -20,7 +20,7 @@ class MyGame:
         self.running = True
         self.game = Game()
         self.game.new_player(1, "temporary_name", np.array([1, 3]))
-        # self.game.new_player(2, "aaaa", np.array([1, 5]))
+        # self.game.new_player(2, "temporary_name", np.array([1, 5]))
 
     def process_input(self, player: Player):
 
