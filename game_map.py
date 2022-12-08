@@ -230,18 +230,18 @@ class GameMap:
                         (a * tile_size, b * tile_size, tile_size, tile_size),
                     )
 
-        for x in range(self.width):
+        for x in range(self.width + 1):
             pygame.draw.line(
                 window,
                 (0, 0, 0),
-                (x * tile_size, 0),
-                (x * tile_size, constants.window_height),
+                (x * tile_size - tile_size/2, 0),
+                (x * tile_size - tile_size/2, constants.window_height),
             )
 
-        for y in range(self.height):
+        for y in range(self.height + 1):
             pygame.draw.line(
                 window,
                 (0, 0, 0),
-                (0, y * tile_size),
-                (constants.window_width, y * tile_size),
+                (0, y * tile_size - tile_size/2),
+                (constants.window_width, y * tile_size - tile_size/2),
             )
