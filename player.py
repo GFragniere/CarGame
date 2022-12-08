@@ -264,7 +264,9 @@ class Player:
             the size of a tile in the current window size
         """
         if self.scaled_texture is None:
-            self.scaled_texture = pygame.transform.scale(self.texture, (tile_size, tile_size))
+            self.scaled_texture = pygame.transform.scale(
+                self.texture, (tile_size, tile_size)
+            )
         if self.displayed_texture is None:
             self.displayed_texture = self.scaled_texture
         if self.speed[1] == 0:
@@ -290,7 +292,9 @@ class Player:
 
     def draw_arrow(self, window, tile_size: int):
         player_pos = self.position * tile_size
-        pygame.draw.rect(window, (200,200,200), (player_pos[0] + 12, player_pos[1] - 32, 8, 16))
+        pygame.draw.rect(
+            window, (200, 200, 200), (player_pos[0] + 12, player_pos[1] - 32, 8, 16)
+        )
 
     def can_play(self):
         self.has_played = False
