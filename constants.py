@@ -23,7 +23,6 @@ base_map = GameMap(40, 25)
 base_map.base_map()
 
 default_positions = {
-    0: np.array([1, 1]),
     1: np.array([1, 8]),
     2: np.array([1, 7]),
     3: np.array([1, 6]),
@@ -31,4 +30,5 @@ default_positions = {
     5: np.array([1, 4]),
     6: np.array([1, 3]),
     7: np.array([1, 2]),
+    8: np.array([1, 1]),
 }

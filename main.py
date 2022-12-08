@@ -4,6 +4,7 @@ import pygame
 import constants
 
 from game import Game
+from game_map import GameMap
 from player import Player
 from player import PlayerState
 
@@ -19,7 +20,7 @@ class MyGame:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game = Game()
-
+        self.collision_help = True
         self.turn_count = 0
 
     def process_input(self, player: Player):
@@ -32,10 +33,12 @@ class MyGame:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                     break
+                elif event.key == pygame.K_h:
+                    self.collision_help = not self.collision_help
                 else:
                     if constants.default_inputs.get(event.key) is not None:
                         if not player.collision_speed_check(
-                            self.game.game_map, constants.default_inputs.get(event.key)
+                            self.game.game_map, constants.default_inputs.get(event.key), self.collision_help
                         ):
                             player.speed += constants.default_inputs.get(event.key)
                             self.move_player(player)
@@ -44,9 +47,11 @@ class MyGame:
     def render(self):
         self.window.fill((0, 0, 0))
         self.game.draw(self.window, self.turn_count)
+        if self.collision_help:
+            pygame.draw.rect(self.window, (200, 200, 200), (constants.window_width - self.game.game_map.width, 0, 30, 30))
         for player in self.game.player_list:
             if (
-                player.collision_speed_check(self.game.game_map, np.array([0, 0]))
+                player.collision_speed_check(self.game.game_map, np.array([0, 0]), self.collision_help)
                 and player.state_check(self.game.game_map) != PlayerState.IS_OUT
             ):
                 pygame.draw.polygon(
@@ -68,7 +73,7 @@ class MyGame:
                     else:
                         self.game.update(player)
                         self.process_input(player)
-                        if player.end_of_player(self.game.game_map):
+                        if self.end_of_player(player, self.game.game_map):
                             continue
                         if not player.movement_validity():
                             continue
@@ -105,6 +110,26 @@ class MyGame:
         if players_won > 0:
             self.running = False
 
+    def end_of_player(self, player: Player, game_map: GameMap):
+        """Used to determine if the player should be taken out of the game due to impossibility to save himself.
+
+        Parameters
+        ----------
+
+        game_map: GameMap
+            the map on which the player is evolving.
+
+        :return:
+        True if the player should be taken out of the game, False if he can still play.
+        """
+        outcomes = []
+        for i, elem in constants.default_inputs.items():
+            outcomes.append(player.collision_speed_check(game_map, elem, self.collision_help))
+        if np.all(outcomes):
+            player.is_out()
+            return True
+        return False
+
 
 can_start = False
 
@@ -126,9 +151,10 @@ game = MyGame()
 
 for a in range(player_count):
     if a == 0:
-        game.game.new_player(a, name_list[a], constants.default_positions.get((8 - player_count)))
+        game.game.new_player(a, name_list[a], constants.default_positions.get(player_count))
     else:
         game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+
 
 game.run()
 pygame.quit()
