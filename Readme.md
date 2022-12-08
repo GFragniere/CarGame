@@ -26,6 +26,9 @@ to move, you can use a key on the numpad in order to make one of the following m
 In order to know where you'll end up on your next move, there is a small colored square that indicates you where you'll
 end up if you keep the same speed. Every player has its own color, making it easier to see where everyone is and will go.
 
+You can also decide whether you would like to have a collision assisting tool or not by pressing the `h` key during your turn. There will then be a small white-ish square in the top left of the screen to indicate you that the help is enabled (note that the help is enabled by default).
+
+
 ## Goal
 The objective of the game is to reach the finish line (white squares at the bottom left part of the screen) without 
 colliding with another player or with a wall (in brown color). The road is represented by the grey colored square.
