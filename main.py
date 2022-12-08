@@ -20,7 +20,12 @@ class MyGame:
         self.running = True
         self.game = Game()
         self.game.new_player(0, "temporary_name", np.array([1, 3]))
-        self.game.new_player(1, "temporary_name", np.array([1, 5]))
+        self.game.new_player(1, "temporary_name", np.array([1, 4]))
+        self.game.new_player(2, "temporary_name", np.array([1, 5]))
+        self.game.new_player(3, "temporary_name", np.array([1, 6]))
+        self.game.new_player(4, "temporary_name", np.array([1, 7]))
+        self.game.new_player(5, "temporary_name", np.array([1, 8]))
+
         self.turn_count = 0
 
     def process_input(self, player: Player):
@@ -46,9 +51,7 @@ class MyGame:
         self.window.fill((0, 0, 0))
         self.game.draw(self.window, self.turn_count)
         for player in self.game.player_list:
-            if player.collision_speed_check(
-                self.game.game_map, np.array([0, 0])
-            ):
+            if player.collision_speed_check(self.game.game_map, np.array([0, 0])):
                 pygame.draw.polygon(
                     self.window, (200, 50, 50), [(80, 60), (40, 130), (120, 130)]
                 )
@@ -63,6 +66,7 @@ class MyGame:
         while self.running:
             for player in self.game.player_list:
                 if player.number == self.turn_count:
+                    self.game.update(player)
                     self.process_input(player)
                     if not player.movement_validity():
                         continue
@@ -71,10 +75,15 @@ class MyGame:
                     self.render()
                     self.game.player_state_reset()
 
+
     def move_player(self, player: Player):
         if player.path_checking(self.game.game_map) == 1:
+            self.game.game_map.modify_tile_list_state(
+                player.get_walk_coordinates(), 2**player.number
+            )
             player.plays()
-        else:
+        elif player.path_checking(self.game.game_map) == 2:
+            player.is_out()
             self.running = False
             print("Game ending, processing results...")
 
