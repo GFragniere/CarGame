@@ -106,19 +106,25 @@ class MyGame:
             self.running = False
 
 
-try:
-    player_count = int(input("Please chose how much player will play (max 8): "))
-    if not 0 < player_count < 9:
-        print("Invalid number. Please try again")
-    else:
-        name_list = []
-        for a in range(player_count):
-            name_list.append(input("Player #" + str(a + 1) + ", choose your name: "))
-        game = MyGame()
-        for a in range(player_count):
-            game.game.new_player(a, name_list[a], constants.default_positions.get(a))
-        game.run()
-        pygame.quit()
+can_start = False
 
-except ValueError:
-    print("That's not a number, try again!")
+while not can_start:
+    try:
+        player_count = int(input("Please chose how much player will play (max 8): "))
+        if not 0 < player_count < 9:
+            print("Invalid number. Please try again")
+        else:
+            can_start = True
+    except ValueError:
+        print("That's not a number, try again!")
+
+name_list = []
+for a in range(player_count):
+    name_list.append(input("Player #" + str(a + 1) + ", choose your name: "))
+game = MyGame()
+for a in range(player_count):
+    game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+game.run()
+pygame.quit()
+
+
