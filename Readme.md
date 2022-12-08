@@ -3,7 +3,7 @@
 This is a semi interactive game multi-user game
 
 ## Installation
-You'll need to install Pygame (https://pygame.org) to run the program, as well as numpy (https://numpy.org/install/)
+To install everything, you'll need to run `pip install -r requirements.txt` in the terminal console.
 
 ## How it works
 As of right now, it is a small single player game, but I will add the possibility to play with multiple different 
@@ -23,8 +23,8 @@ to move, you can use a key on the numpad in order to make one of the following m
     1: Accelerate down-left
     7: Accelerate up-left
 
-In order to know where you'll end up on your next move, there is a small red-ish square that indicates you where you'll
-end up if you keep the same speed.
+In order to know where you'll end up on your next move, there is a small colored square that indicates you where you'll
+end up if you keep the same speed. Every player has its own color, making it easier to see where everyone is and will go.
 
 ## Goal
 The objective of the game is to reach the finish line (white squares at the bottom left part of the screen) without 
