@@ -288,12 +288,12 @@ class Player:
         self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
         pygame.draw.rect(
             window,
-            (30 * self.number, 100, 30 * self.number),
+            (80, 28, 28 * self.number),
             (
-                (self.speed[0] + self.position[0]) * tile_size,
-                (self.speed[1] + self.position[1]) * tile_size,
-                tile_size,
-                tile_size,
+                (self.speed[0] + self.position[0]) * tile_size + tile_size / 4,
+                (self.speed[1] + self.position[1]) * tile_size + tile_size / 4,
+                tile_size / 2,
+                tile_size / 2,
             ),
         )
         if turn == self.number:
@@ -313,7 +313,14 @@ class Player:
             the size of a tile on the window
         """
         pygame.draw.rect(
-            window, (145, 224, 255), ((self.position[0] * tile_size) + 1, (self.position[1] * tile_size) + 1, tile_size - 1, tile_size - 1)
+            window,
+            (145, 224, 255),
+            (
+                (self.position[0] * tile_size) + 1,
+                (self.position[1] * tile_size) + 1,
+                tile_size - 1,
+                tile_size - 1,
+            ),
         )
 
     def can_play(self):

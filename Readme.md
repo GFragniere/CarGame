@@ -31,7 +31,10 @@ The objective of the game is to reach the finish line (white squares at the bott
 colliding with another player or with a wall (in brown color). The road is represented by the grey colored square.
 
 The game is coded in a way that you technically can't make a move that would lead you to lose (i.e. accelerating
-and making you automatically lose, because you'd have too much speed to stop before a wall), but can be messy in 
-certain situations. If you have to slow down/change direction, you'll see a small "attention" sign on the top
+and making you automatically lose, because you'd have too much speed to stop before a wall). If you have to slow down/change direction, you'll see a small "attention" sign on the top
 left part of the screen, alerting you that you must change direction, and fast.
+
+Note that if a player cannot make a move to save himself (i.e. 2 other players corner him), he will be forced out of the game, and will be unable to continue playing, letting the others play for blood.
+
+
 
