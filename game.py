@@ -95,7 +95,10 @@ class Game:
         ----------
 
         window: pygame.display
-            the window on which everything will be drawn"""
+            the window on which everything will be drawn
+        turn: int
+            the number of the turn in the game, to know if it's the player's turn or not.
+        """
         self.tile_size = int(pygame.display.get_window_size()[0] / self.game_map.width)
         self.game_map.draw(window, self.tile_size)
         for player in self.player_list:

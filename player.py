@@ -5,9 +5,7 @@ from game_map import TileState
 import numpy as np
 import pygame
 import os
-import constants as constants
-
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+import constants as cst
 
 
 class PlayerState(Enum):
@@ -75,7 +73,14 @@ class Player:
         A method used to draw the player's car image, rotating according to his direction, as well as the tile
         he would land on in his next move if he keeps the same speed.
 
+    draw_arrow(window, tile_size)
+        Used to draw a small square under the player if it's his turn.
 
+    can_play()
+        Used to change the player's attribute 'has_played' to False
+
+    end_of_player(game_map)
+        Used to determine if the player should be taken out of the game due to impossibility to save himself.
     """
 
     def __init__(
@@ -84,7 +89,7 @@ class Player:
         position: np.ndarray,
         speed: np.ndarray,
         name: str,
-        inputs: dict = constants.default_inputs,
+        inputs: dict = cst.default_inputs,
         texture=pygame.image.load("image/red_car.png"),
     ):
         """
@@ -137,7 +142,7 @@ class Player:
         """
         if velocity is None:
             velocity = self.speed.copy()
-        if self.state_check() == PlayerState.IS_OUT:
+        if self.state_check(game_map) == PlayerState.IS_OUT:
             path = 2
             return path
         path = 1
@@ -166,12 +171,14 @@ class Player:
         self.position = np.array([-1, -1])
         self.speed = np.array([0, 0])
 
-    def state_check(self):
+    def state_check(self, game_map: GameMap):
         """Checks a player's state to know if he can play, is out or has won.
 
         Parameters
         ----------
-        None.
+
+        game_map: GameMap
+            the map on which the player is evolving
 
         :return:  CAN_PLAY if the player can play, IS_OUT if the player is out of the game,
         HAS_WON if the player has won.
@@ -181,7 +188,7 @@ class Player:
         if np.any(self.position < 0):
             self.is_out()
             return PlayerState.IS_OUT
-        if np.array_equal(self.position, np.array([1, 23])):
+        if game_map.map[self.position[0], self.position[1]] == TileState.WIN.value:
             return PlayerState.HAS_WON
         return PlayerState.CAN_PLAY
 
@@ -262,6 +269,9 @@ class Player:
 
         tile_size: int
             the size of a tile in the current window size
+
+        turn: int
+            the current turn of the game, to know if it's this player's turn to play or not
         """
         if self.scaled_texture is None:
             self.scaled_texture = pygame.transform.scale(
@@ -278,7 +288,7 @@ class Player:
         self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
         pygame.draw.rect(
             window,
-            (47, 9, 9),
+            (30 * self.number, 100, 30 * self.number),
             (
                 (self.speed[0] + self.position[0]) * tile_size,
                 (self.speed[1] + self.position[1]) * tile_size,
@@ -286,15 +296,46 @@ class Player:
                 tile_size,
             ),
         )
-        window.blit(self.displayed_texture, (self.position * tile_size))
         if turn == self.number:
             self.draw_arrow(window, tile_size)
+        window.blit(self.displayed_texture, (self.position * tile_size))
 
     def draw_arrow(self, window, tile_size: int):
-        player_pos = self.position * tile_size
+        """Used to draw a small square under the player if it's his turn.
+
+        Parameters
+        ----------
+
+        window:
+            the window on which the game is displayed
+
+        tile_size: int
+            the size of a tile on the window
+        """
         pygame.draw.rect(
-            window, (200, 200, 200), (player_pos[0] + 12, player_pos[1] - 32, 8, 16)
+            window, (145, 224, 255), ((self.position[0] * tile_size) + 1, (self.position[1] * tile_size) + 1, tile_size - 1, tile_size - 1)
         )
 
     def can_play(self):
+        """Used to change the player's attribute 'has_played' to False"""
         self.has_played = False
+
+    def end_of_player(self, game_map: GameMap):
+        """Used to determine if the player should be taken out of the game due to impossibility to save himself.
+
+        Parameters
+        ----------
+
+        game_map: GameMap
+            the map on which the player is evolving.
+
+        :return:
+        True if the player should be taken out of the game, False if he can still play.
+        """
+        outcomes = []
+        for i, elem in cst.default_inputs.items():
+            outcomes.append(self.collision_speed_check(game_map, elem))
+        if np.all(outcomes):
+            self.is_out()
+            return True
+        return False

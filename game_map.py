@@ -224,7 +224,7 @@ class GameMap:
                     )
                 else:
                     value = int(math.log(self.map[a, b], 2))
-                    pygame.draw.rect(window, (value * 31, 31, 31), (a * tile_size, b * tile_size, tile_size, tile_size))
+                    pygame.draw.rect(window, (100, 31, value * 31), (a * tile_size, b * tile_size, tile_size, tile_size))
 
         for x in range(self.width):
             pygame.draw.line(

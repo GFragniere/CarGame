@@ -5,8 +5,8 @@ import constants
 
 from game import Game
 from player import Player
+from player import PlayerState
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 
 
@@ -19,12 +19,12 @@ class MyGame:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game = Game()
-        self.game.new_player(0, "temporary_name", np.array([1, 3]))
-        self.game.new_player(1, "temporary_name", np.array([1, 4]))
-        self.game.new_player(2, "temporary_name", np.array([1, 5]))
-        self.game.new_player(3, "temporary_name", np.array([1, 6]))
-        self.game.new_player(4, "temporary_name", np.array([1, 7]))
-        self.game.new_player(5, "temporary_name", np.array([1, 8]))
+        self.game.new_player(0, "temporary_name", np.array([1, 8]))
+        self.game.new_player(1, "temporary_name", np.array([1, 3]))
+        self.game.new_player(2, "temporary_name", np.array([1, 4]))
+        self.game.new_player(3, "temporary_name", np.array([1, 5]))
+        self.game.new_player(4, "temporary_name", np.array([1, 6]))
+        self.game.new_player(5, "temporary_name", np.array([1, 7]))
 
         self.turn_count = 0
 
@@ -51,7 +51,8 @@ class MyGame:
         self.window.fill((0, 0, 0))
         self.game.draw(self.window, self.turn_count)
         for player in self.game.player_list:
-            if player.collision_speed_check(self.game.game_map, np.array([0, 0])):
+            if player.collision_speed_check(self.game.game_map, np.array([0, 0]))\
+            and player.state_check(self.game.game_map) != PlayerState.IS_OUT:
                 pygame.draw.polygon(
                     self.window, (200, 50, 50), [(80, 60), (40, 130), (120, 130)]
                 )
@@ -66,15 +67,16 @@ class MyGame:
         while self.running:
             for player in self.game.player_list:
                 if player.number == self.turn_count:
-                    self.game.update(player)
-                    self.process_input(player)
-                    if not player.movement_validity():
-                        continue
-                    self.turn_count += 1
-                    self.turn_count %= len(self.game.player_list)
-                    self.render()
-                    self.game.player_state_reset()
-
+                    if player.state_check(self.game.game_map) == PlayerState.IS_OUT:
+                        player.has_played = True
+                    else:
+                        self.game.update(player)
+                        self.process_input(player)
+                        if player.end_of_player(self.game.game_map):
+                            continue
+                        if not player.movement_validity():
+                            continue
+                    self.end_turn()
 
     def move_player(self, player: Player):
         if player.path_checking(self.game.game_map) == 1:
@@ -84,8 +86,31 @@ class MyGame:
             player.plays()
         elif player.path_checking(self.game.game_map) == 2:
             player.is_out()
-            self.running = False
             print("Game ending, processing results...")
+        elif player.path_checking(self.game.game_map) == 3:
+            print("Someone won!")
+            player.plays()
+
+    def end_turn(self):
+        self.turn_count += 1
+        self.turn_count %= len(self.game.player_list)
+        self.render()
+        self.game.player_state_reset()
+        self.end_of_game()
+
+    def end_of_game(self):
+        players_out = 0
+        players_won = 0
+        for player in self.game.player_list:
+            if player.state_check(self.game.game_map) == PlayerState.IS_OUT:
+                players_out += 1
+            elif player.state_check(self.game.game_map) == PlayerState.HAS_WON:
+                players_won += 1
+        if players_out == len(self.game.player_list):
+            self.running = False
+            print("Everyone is out, game is over!")
+        if players_won > 0:
+            self.running = False
 
 
 game = MyGame()
