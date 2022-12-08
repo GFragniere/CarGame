@@ -2,6 +2,7 @@ from game_map import GameMap
 from player import Player
 import numpy as np
 import pygame
+import constants as cst
 
 
 class Game:
@@ -39,8 +40,7 @@ class Game:
         None.
         """
         self.player_list = []
-        self.game_map = GameMap(40, 25)
-        self.game_map.base_map()
+        self.game_map = cst.base_map
         self.tile_size = 0
 
     def new_player(
