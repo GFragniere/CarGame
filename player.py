@@ -297,6 +297,9 @@ class Player:
                 tile_size / 2,
             ),
         )
+        path = self.get_walk_coordinates()
+        for a in range(len(path[0])):
+            pygame.draw.rect(window, (80, 28, 28 * self.number), ((path[0][a] * tile_size) + 3/8 * tile_size, path[1][a]*tile_size + 3/8 * tile_size, tile_size / 4, tile_size / 4))
         if turn == self.number:
             self.draw_arrow(window, tile_size)
         window.blit(self.name_display, ((self.position[0] + 1) * tile_size, self.position[1] * tile_size))
@@ -314,16 +317,9 @@ class Player:
         tile_size: int
             the size of a tile on the window
         """
-        pygame.draw.rect(
+        pygame.draw.circle(
             window,
-            (145, 224, 255),
-            (
-                (self.position[0] * tile_size) + 1,
-                (self.position[1] * tile_size) + 1,
-                tile_size - 1,
-                tile_size - 1,
-            ),
-        )
+            (145, 224, 255), (((self.position[0] + 1/2) * tile_size), ((self.position[1] + 1/2) * tile_size)), tile_size/3)
 
     def can_play(self):
         """Used to change the player's attribute 'has_played' to False"""
