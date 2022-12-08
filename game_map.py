@@ -1,6 +1,7 @@
 import numpy as np
 import pygame
 import constants
+import math
 
 # from CarGame.player import Player
 from enum import Flag, auto
@@ -210,10 +211,10 @@ class GameMap:
                             tile_size,
                         ),
                     )
-                else:
+                elif self.map[a, b] == 0:
                     pygame.draw.rect(
                         window,
-                        (55 + (self.map[a, b] * 30), 55, 55),
+                        (55, 55, 55),
                         (
                             a * tile_size,
                             b * tile_size,
@@ -221,6 +222,9 @@ class GameMap:
                             tile_size,
                         ),
                     )
+                else:
+                    value = int(math.log(self.map[a, b], 2))
+                    pygame.draw.rect(window, (value * 31, 31, 31), (a * tile_size, b * tile_size, tile_size, tile_size))
 
         for x in range(self.width):
             pygame.draw.line(
