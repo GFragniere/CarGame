@@ -117,6 +117,8 @@ class Player:
         self.scaled_texture = None
         self.displayed_texture = None
         self.has_played = True
+        self.font = pygame.font.Font(None, 30)
+        self.name_display = self.font.render(self.name, False, pygame.color.Color("#000000"))
 
     def plays(self):
         """Uses the player speed and current location to make him go to a new tile."""
@@ -284,6 +286,7 @@ class Player:
         else:
             angle = math.degrees(math.atan(self.speed[0] / self.speed[1]))
         self.displayed_texture = pygame.transform.rotate(self.scaled_texture, angle)
+
         pygame.draw.rect(
             window,
             (80, 28, 28 * self.number),
@@ -296,6 +299,7 @@ class Player:
         )
         if turn == self.number:
             self.draw_arrow(window, tile_size)
+        window.blit(self.name_display, ((self.position[0] - 1) * tile_size, self.position[1] * tile_size))
         window.blit(self.displayed_texture, (self.position * tile_size))
 
     def draw_arrow(self, window, tile_size: int):
