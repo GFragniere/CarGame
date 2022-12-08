@@ -125,9 +125,10 @@ for a in range(player_count):
 game = MyGame()
 
 for a in range(player_count):
-    game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+    if a == 0:
+        game.game.new_player(a, name_list[a], constants.default_positions.get((8 - player_count)))
+    else:
+        game.game.new_player(a, name_list[a], constants.default_positions.get(a))
 
 game.run()
 pygame.quit()
-
-
