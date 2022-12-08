@@ -220,7 +220,7 @@ class Player:
             x += self.position
         return tuple([tuple(elem) for elem in array.T])
 
-    def collision_speed_check(self, game_map: GameMap, acceleration: np.array):
+    def collision_speed_check(self, game_map: GameMap, acceleration: np.array, help: bool):
         """Used to know if the player can make a specific move or not (the speed being the desired change
         in the player's speed) without being automatically being out of the game.
 
@@ -233,18 +233,19 @@ class Player:
 
         :return: True if the movement will lead to lose, False if the path is safe.
         """
-        x = int(self.speed[0] + acceleration[0])
-        y = int(self.speed[1] + acceleration[1])
-        x_interval = round((x**2 + abs(x)) / 2)
-        y_interval = round((y**2 + abs(y)) / 2)
-        path1 = self.path_checking(
-            game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval])
-        )
-        path2 = self.path_checking(game_map, np.array([x, y]))
-        if self.position[0] + x_interval < 0 or self.position[1] + y_interval < 0:
-            return True
-        if path1 == 2 or path2 == 2:
-            return True
+        if help:
+            x = int(self.speed[0] + acceleration[0])
+            y = int(self.speed[1] + acceleration[1])
+            x_interval = round((x**2 + abs(x)) / 2)
+            y_interval = round((y**2 + abs(y)) / 2)
+            path1 = self.path_checking(
+                game_map, np.array([np.sign(x) * x_interval, np.sign(y) * y_interval])
+            )
+            path2 = self.path_checking(game_map, np.array([x, y]))
+            if self.position[0] + x_interval < 0 or self.position[1] + y_interval < 0:
+                return True
+            if path1 == 2 or path2 == 2:
+                return True
         return False
 
     def movement_validity(self):
@@ -252,10 +253,7 @@ class Player:
 
         :return: True if the player has made a valid move, False if not.
         """
-        if self.has_played:
-            return True
-        else:
-            return False
+        return self.has_played
 
     def draw(self, window: pygame.display, tile_size: int, turn: int):
         """A method used to draw the player's car image, rotating according to his direction, as well as the tile
@@ -327,22 +325,4 @@ class Player:
         """Used to change the player's attribute 'has_played' to False"""
         self.has_played = False
 
-    def end_of_player(self, game_map: GameMap):
-        """Used to determine if the player should be taken out of the game due to impossibility to save himself.
 
-        Parameters
-        ----------
-
-        game_map: GameMap
-            the map on which the player is evolving.
-
-        :return:
-        True if the player should be taken out of the game, False if he can still play.
-        """
-        outcomes = []
-        for i, elem in cst.default_inputs.items():
-            outcomes.append(self.collision_speed_check(game_map, elem))
-        if np.all(outcomes):
-            self.is_out()
-            return True
-        return False
