@@ -19,14 +19,6 @@ class MyGame:
         self.clock = pygame.time.Clock()
         self.running = True
         self.game = Game()
-        self.game.new_player(0, "temporary_name", np.array([1, 1]))
-        self.game.new_player(1, "temporary_name", np.array([1, 8]))
-        self.game.new_player(2, "temporary_name", np.array([1, 7]))
-        self.game.new_player(3, "temporary_name", np.array([1, 6]))
-        self.game.new_player(4, "temporary_name", np.array([1, 5]))
-        self.game.new_player(5, "temporary_name", np.array([1, 4]))
-        self.game.new_player(6, "temporary_name", np.array([1, 3]))
-        self.game.new_player(7, "temporary_name", np.array([1, 2]))
 
         self.turn_count = 0
 
@@ -96,7 +88,7 @@ class MyGame:
             player.is_out()
             print("Game ending, processing results...")
         elif player.path_checking(self.game.game_map) == 3:
-            print("Someone won!")
+            print("Congratulations for reaching the end,", player.name, "!")
             player.plays()
 
     def end_of_game(self):
@@ -114,6 +106,19 @@ class MyGame:
             self.running = False
 
 
-game = MyGame()
-game.run()
-pygame.quit()
+try:
+    player_count = int(input("Please chose how much player will play (max 8): "))
+    if not 0 < player_count < 9:
+        print("Invalid number. Please try again")
+    else:
+        name_list = []
+        for a in range(player_count):
+            name_list.append(input("Player #" + str(a + 1) + ", choose your name: "))
+        game = MyGame()
+        for a in range(player_count):
+            game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+        game.run()
+        pygame.quit()
+
+except ValueError:
+    print("That's not a number, try again!")
