@@ -298,10 +298,13 @@ class Player:
             ),
         )
         path = self.get_walk_coordinates()
-        for a in range(len(path[0])):
-            pygame.draw.rect(window, (80, 28, 28 * self.number), ((path[0][a] * tile_size) + 3/8 * tile_size, path[1][a]*tile_size + 3/8 * tile_size, tile_size / 4, tile_size / 4))
+
         if turn == self.number:
             self.draw_arrow(window, tile_size)
+            for a in range(len(path[0])):
+                pygame.draw.rect(window, (80, 28, 28 * self.number), (
+                (path[0][a] * tile_size) + 3 / 8 * tile_size, path[1][a] * tile_size + 3 / 8 * tile_size, tile_size / 4,
+                tile_size / 4))
         window.blit(self.name_display, ((self.position[0] + 1) * tile_size, self.position[1] * tile_size))
         window.blit(self.displayed_texture, (self.position * tile_size))
 
