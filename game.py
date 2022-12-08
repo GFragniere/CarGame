@@ -85,7 +85,7 @@ class Game:
 
     def update(self, player: Player):
         """Used to remove the previous move of the player."""
-        self.game_map.remove_previous_move(2 ** (player.number - 1))
+        self.game_map.remove_previous_move(int(2**player.number))
 
     def draw(self, window: pygame.display, turn: int):
         """A small draw method that calls on each player's draw method, as well as the map's draw method to draw
