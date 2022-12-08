@@ -121,9 +121,12 @@ while not can_start:
 name_list = []
 for a in range(player_count):
     name_list.append(input("Player #" + str(a + 1) + ", choose your name: "))
+
 game = MyGame()
+
 for a in range(player_count):
     game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+
 game.run()
 pygame.quit()
 
