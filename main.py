@@ -12,14 +12,15 @@ os.environ["SDL_VIDEO_CENTERED"] = "1"
 
 
 class MyGame:
-    def __init__(self):
+    def __init__(self, map_number: int):
         pygame.init()
         self.window = pygame.display.set_mode(constants.window_size)
         pygame.display.set_caption("Car Game")
         pygame.display.set_icon(pygame.image.load("image/car_game_icon.png"))
         self.clock = pygame.time.Clock()
         self.running = True
-        self.game = Game()
+        self.position_grid = np.genfromtxt("position"+str(map_number)+".csv", dtype=int, delimiter=",")
+        self.game = Game(map_number)
         self.collision_help = True
         self.turn_count = 0
 
@@ -140,20 +141,25 @@ while not can_start:
             print("Invalid number. Please try again")
         else:
             can_start = True
+        map_number = int(input("On which map do you want to play? (Maps go from 1 to 5) "))
+        if not 0 < map_number < 6:
+            print("Not a valid map number, try again!")
+            can_start = False
     except ValueError:
         print("That's not a number, try again!")
+
 
 name_list = []
 for a in range(player_count):
     name_list.append(input("Player #" + str(a + 1) + ", choose your name: "))
 
-game = MyGame()
+game = MyGame(map_number)
 
 for a in range(player_count):
     if a == 0:
-        game.game.new_player(a, name_list[a], constants.default_positions.get(player_count))
+        game.game.new_player(a, name_list[a], game.position_grid[player_count - 1])
     else:
-        game.game.new_player(a, name_list[a], constants.default_positions.get(a))
+        game.game.new_player(a, name_list[a], game.position_grid[a])
 
 
 game.run()

@@ -33,14 +33,14 @@ class Game:
         everything on the window.
     """
 
-    def __init__(self):
+    def __init__(self, map_number: int):
         """
         Parameters
         ----------
         None.
         """
         self.player_list = []
-        self.game_map = GameMap("map1.csv")
+        self.game_map = GameMap("map" + str(map_number) + ".csv")
         self.tile_size = 0
 
     def new_player(
