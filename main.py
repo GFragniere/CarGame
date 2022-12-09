@@ -72,6 +72,7 @@ class MyGame:
                         player.has_played = True
                     else:
                         self.game.update(player)
+                        self.render()
                         self.process_input(player)
                         if self.end_of_player(player, self.game.game_map):
                             continue
@@ -79,7 +80,6 @@ class MyGame:
                             continue
                     self.turn_count += 1
                     self.turn_count %= len(self.game.player_list)
-                    self.render()
                     self.game.player_state_reset()
                     self.end_of_game()
 

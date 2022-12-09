@@ -26,18 +26,13 @@ to move, you can use a key on the numpad in order to make one of the following m
 In order to know where you'll end up on your next move, there is a small colored square that indicates you where you'll
 end up if you keep the same speed. Every player has its own color, making it easier to see where everyone is and will go.
 
-You can also decide whether you would like to have a collision assisting tool or not by pressing the `h` key during your turn. There will then be a small white-ish square in the top left of the screen to indicate you that the help is enabled (note that the help is enabled by default).
+You can also decide whether you would like to have a collision assisting tool or not by pressing the `h` key during your turn.
+There will then be a small white-ish square in the top right of the screen to indicate you that the help is enabled (note that the help is enabled by default).
+The collision assisting tool will warn you if you are about to crash or run out of course by displaying a "warning sign" on the top left of the screen, indicating you that you should be careful on what move you decide to make next.
+By pressing `h`, it will be deactivated until the `h` key is pressed again, allowing each player to decide if they want to have help or not.
 
 
 ## Goal
 The objective of the game is to reach the finish line (white squares at the bottom left part of the screen) without 
-colliding with another player or with a wall (in brown color). The road is represented by the grey colored square.
-
-The game is coded in a way that you technically can't make a move that would lead you to lose (i.e. accelerating
-and making you automatically lose, because you'd have too much speed to stop before a wall). If you have to slow down/change direction, you'll see a small "attention" sign on the top
-left part of the screen, alerting you that you must change direction, and fast.
-
-Note that if a player cannot make a move to save himself (i.e. 2 other players corner him), he will be forced out of the game, and will be unable to continue playing, letting the others play for blood.
-
-
+colliding with another player, with a wall (in brown color) or going out of the course (screen). The road is represented by the grey colored square.
 

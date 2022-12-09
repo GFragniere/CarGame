@@ -60,7 +60,7 @@ class GameMap:
         Used to draw the game_map on the window.
     """
 
-    def __init__(self, width: int, height: int):
+    def __init__(self, file: str):
         """
         Parameters
         ----------
@@ -69,9 +69,11 @@ class GameMap:
         height: int
             used to determine the height (xy coordinate) of the game map.
         """
-        self.width = width
-        self.height = height
-        self.map = np.zeros((width, height), dtype=int)
+
+        # self.map = np.zeros((width, height), dtype=int)
+        self.map = np.genfromtxt(file, dtype=int, delimiter=",")
+        self.width = len(self.map)
+        self.height = len(self.map[0])
 
     def create_finish_line(
         self, finish_x: int, finish_y: int, start_finish_x: int, start_finish_y: int
@@ -134,8 +136,8 @@ class GameMap:
             self.create_kill_zone(2, 5, 26, 14)
             self.create_kill_zone(2, 6, 8, 19)
             self.create_kill_zone(2, 6, 20, 19)
-            self.create_kill_zone(5, 4, 3, 21)
-            self.create_finish_line(3, 4, 0, 21)
+            self.create_kill_zone(5, 4, 3, 21)  # 256
+            self.create_finish_line(3, 4, 0, 21)  # 512
 
     def get_tile_list_type(self, index: tuple, tile_value: int):
         """Used to return a set of tiles stored in a tuple of tuples of indexes for a specific player with his

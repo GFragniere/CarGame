@@ -19,9 +19,6 @@ window_width = 1280
 window_height = 800
 window_size = (window_width, window_height)
 
-base_map = GameMap(40, 25)
-base_map.base_map()
-
 default_positions = {
     1: np.array([1, 8]),
     2: np.array([1, 7]),
