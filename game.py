@@ -40,7 +40,7 @@ class Game:
         None.
         """
         self.player_list = []
-        self.game_map = GameMap("map" + str(map_number) + ".csv")
+        self.game_map = GameMap("maps/map" + str(map_number) + ".csv")
         self.tile_size = 0
 
     def new_player(

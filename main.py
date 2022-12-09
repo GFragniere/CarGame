@@ -19,7 +19,7 @@ class MyGame:
         pygame.display.set_icon(pygame.image.load("image/car_game_icon.png"))
         self.clock = pygame.time.Clock()
         self.running = True
-        self.position_grid = np.genfromtxt("position"+str(map_number)+".csv", dtype=int, delimiter=",")
+        self.position_grid = np.genfromtxt("positions/position"+str(map_number)+".csv", dtype=int, delimiter=",")
         self.game = Game(map_number)
         self.collision_help = True
         self.turn_count = 0
@@ -147,6 +147,7 @@ while not can_start:
             can_start = False
     except ValueError:
         print("That's not a number, try again!")
+        can_start = False
 
 
 name_list = []
@@ -159,7 +160,7 @@ for a in range(player_count):
     if a == 0:
         game.game.new_player(a, name_list[a], game.position_grid[player_count - 1])
     else:
-        game.game.new_player(a, name_list[a], game.position_grid[a])
+        game.game.new_player(a, name_list[a], game.position_grid[a - 1])
 
 
 game.run()
